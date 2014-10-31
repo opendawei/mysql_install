@@ -1,0 +1,101 @@
+yum -y install make gcc gcc-c++ cmake ncurses-devel zlib-devel openssl-devel perl-devel libaio-devel glibc-devel libstdc++-devel flex bison readline readline-devel
+
+export MYSQL_HOME=/opt/mysql
+export MYSQL_DATA=/data
+export MYSQL_SRC=/usr/src
+
+groupadd -r mysql
+useradd -g mysql -r -s /sbin/nologin mysql
+
+mkdir -p $MYSQL_DATA
+
+tar zxf mariadb-x.x.x.tar.gz -C /path_to_source
+
+cd /path_to_source/
+mkdir build
+
+cd build
+
+cmake .. -DCMAKE_INSTALL_PREFIX=$MYSQL_HOME \
+ -DMYSQL_DATADIR=$MYSQL_DATA \
+ -DSYSCONFDIR=/etc/mysql \
+ -DMYSQL_USER=mysql \
+ -DMYSQL_TCP_PORT=3306 \
+ -DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
+ -DWITH_XTRADB_STORAGE_ENGINE=1 \
+ -DWITH_INNOBASE_STORAGE_ENGINE=1 \
+ -DWITH_PARTITION_STORAGE_ENGINE=1 \
+ -DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
+ -DWITH_MYISAM_STORAGE_ENGINE=1 \
+ -DWITH_READLINE=1 \
+ -DENABLED_LOCAL_INFILE=1 \
+ -DWITH_EXTRA_CHARSETS=1 \
+ -DDEFAULT_CHARSET=utf8 \
+ -DDEFAULT_COLLATION=utf8_general_ci \
+ -DEXTRA_CHARSETS=all \
+ -DWITH_BIG_TABLES=1 \
+ -DWITH_DEBUG=1
+
+make && make install
+
+
+
+
+
+chown -R mysql.root $MYSQL_HOME
+$MYSQL_HOME/scripts/mysql_install_db --user=mysql --basedir=$MYSQL_HOME --datadir=$MYSQL_DATA
+
+echo "yes" | cp -b $MYSQL_HOME/support-files/my-default.cnf /etc/my.cnf > /dev/null 2>&1
+echo "yes" | cp -b $MYSQL_HOME/support-files/mysql.server /etc/init.d/mysqld > /dev/null 2>&1
+chmod +x /etc/init.d/mysqld
+chkconfig --add mysqld
+chkconfig mysqld on
+service mysqld start
+
+set password for 'USERNAME'@'HOST' = password('PASSWORD');
+
+update mysql.user set password=('PASSWORD') where mysql.user='USER' and host='HOST';
+
+mysqladmin -u USER -h HOST password 'PASSWORD' -p
+
+mysql -e 'drop database test'
+mysql -e 'delete from mysql.user where user=""';
+mysql -e 'update mysql.user set password=password("f") where user="root"'
+mysql -e 'flush privileges'
+
+grant all privileges on *.* to 'root'@'%' identified by 'f' with grant option;
+
+
+
+
+for i in `find . -name 'flags.make'`
+do
+    sed -i 's/\(.*\)\(-Werror\)\(.*\)/\1\3/g' $i
+done
+
+
+
+
+percona-toolkit dependence:
+
+yum -y install perl-DBI perl-DBD-mysql perl-Time-HiRes perl-IO-Socket-SSL
+
+
+
+yum -y install zlib zlib-devel openssl openssl-devel pcre pcre-devel
+
+
+
+
+mysql-proxy install
+
+yum -y install lua lua-devel
+
+
+
+
+
+sysbench
+
+ln -sf $MYSQL_HOME/lib/libperconaserverclient_r.so $MYSQL_HOME/lib/libmysqlclient_r.so
+./configure --with-mysql-includes=/opt/mysql/include --with-mysql-libs=/opt/mysql/lib
