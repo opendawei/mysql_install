@@ -90,12 +90,3 @@ yum -y install zlib zlib-devel openssl openssl-devel pcre pcre-devel
 mysql-proxy install
 
 yum -y install lua lua-devel
-
-
-
-
-
-sysbench
-
-ln -sf $MYSQL_HOME/lib/libperconaserverclient_r.so $MYSQL_HOME/lib/libmysqlclient_r.so
-./configure --with-mysql-includes=/opt/mysql/include --with-mysql-libs=/opt/mysql/lib

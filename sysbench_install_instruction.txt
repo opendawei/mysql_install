@@ -1,0 +1,6 @@
+ln -sf $MYSQL_HOME/lib/libperconaserverclient_r.so $MYSQL_HOME/lib/libmysqlclient_r.so
+
+libtoolize --force --copy
+./autogen.sh
+./configure --with-mysql-includes=/opt/mysql/include --with-mysql-libs=/opt/mysql/lib
+make && make install
