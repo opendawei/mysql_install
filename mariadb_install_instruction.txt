@@ -29,7 +29,7 @@ cmake .. -DCMAKE_INSTALL_PREFIX=$MYSQL_HOME \
  -DWITH_MYISAM_STORAGE_ENGINE=1 \
  -DWITH_READLINE=1 \
  -DENABLED_LOCAL_INFILE=1 \
- -DWITH_EXTRA_CHARSETS=1 \
+ -DWITH_EXTRA_CHARSETS=all \
  -DDEFAULT_CHARSET=utf8 \
  -DDEFAULT_COLLATION=utf8_general_ci \
  -DEXTRA_CHARSETS=all \
@@ -37,7 +37,9 @@ cmake .. -DCMAKE_INSTALL_PREFIX=$MYSQL_HOME \
  -DWITH_DEBUG=1
 
 make && make install
-
+ln -sf $MYSQL_HOME/lib/libperconaserverclient_r.so $MYSQL_HOME/lib/libmysqlclient_r.so
+ln -sf $MYSQL_HOME/lib/libperconaserverclient.so $MYSQL_HOME/lib/libmysqlclient.so
+ln -sf $MYSQL_HOME/lib/libperconaserverclient.a $MYSQL_HOME/lib/libmysqlclient.a
 
 
 
